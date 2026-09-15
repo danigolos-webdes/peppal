@@ -1,7 +1,7 @@
 // Pep Pal service worker — must be served from the site ROOT (/sw.js).
 // Two jobs: keep the app openable offline, and show pushed reminders.
 
-const CACHE = "peppal-v3";
+const CACHE = "peppal-v4";
 const SHELL = ["./", "./index.html", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
