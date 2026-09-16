@@ -44,7 +44,9 @@
   async function register() {
     if (!("serviceWorker" in navigator)) return null;
     try {
-      var reg = await navigator.serviceWorker.register("/sw.js");
+      // Relative, not "/sw.js": the app is served from a subpath
+      // (github.io/<repo>/), where an absolute path 404s and push dies silently.
+      var reg = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
       await navigator.serviceWorker.ready;
       return reg;
     } catch (e) { return null; }
