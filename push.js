@@ -45,9 +45,16 @@
   // resumes from a snapshot instead of navigating, so nothing ever re-checks
   // the worker. Check on every resume and reload once a new one takes over.
   var reloading = false;
+  var watching = false;
   function watchUpdates(reg) {
+    if (watching) return;
+    watching = true;
+    // A first claim is not an update: on a fresh install the worker activates
+    // and claims the uncontrolled page, and reloading there would fire during
+    // Add-to-Home-Screen or the permission prompt.
+    var had = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener("controllerchange", function () {
-      if (reloading) return;
+      if (!had || reloading) return;
       reloading = true;
       window.location.reload();
     });
