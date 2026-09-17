@@ -41,6 +41,24 @@
     return { "Content-Type": "application/json", Authorization: "Bearer " + t };
   }
 
+  // An installed home-screen app can sit on a cached build indefinitely: it
+  // resumes from a snapshot instead of navigating, so nothing ever re-checks
+  // the worker. Check on every resume and reload once a new one takes over.
+  var reloading = false;
+  function watchUpdates(reg) {
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+    var check = function () { try { reg.update(); } catch (e) {} };
+    check();
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") check();
+    });
+    window.addEventListener("focus", check);
+  }
+
   async function register() {
     if (!("serviceWorker" in navigator)) return null;
     try {
@@ -48,6 +66,7 @@
       // (github.io/<repo>/), where an absolute path 404s and push dies silently.
       var reg = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
       await navigator.serviceWorker.ready;
+      watchUpdates(reg);
       return reg;
     } catch (e) { return null; }
   }

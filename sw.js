@@ -1,7 +1,7 @@
 // Pep Pal service worker. Registered relatively, so it works from a subpath.
 // Two jobs: keep the app openable offline, and show pushed reminders.
 
-const CACHE = "peppal-v10";
+const CACHE = "peppal-v11";
 const SHELL = ["./", "./index.html", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
